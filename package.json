@@ -1,0 +1,21 @@
+{
+  "name": "auth-app",
+  "version": "1.0.0",
+  "description": "API for auth",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node ./dist/main.js",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pavel",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1",
+    "tslog": "^3.3.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13"
+  }
+}
