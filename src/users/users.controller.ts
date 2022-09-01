@@ -14,36 +14,36 @@ import { ValidateMiddleware } from '../common/validate.middleware';
 
 @injectable()
 export class UserController extends BaseController implements IUserController {
-	constructor(
-		@inject(TYPES.ILogger) private loggerService: ILogger,
-		@inject(TYPES.UserService) private userService: UserService,
-	) {
-		super(loggerService);
-		this.bindRoutes([
-			{
-				path: '/register',
-				method: 'post',
-				func: this.register,
-				middlewares: [new ValidateMiddleware(UserRegisterDto)],
-			},
-			{ path: '/login', method: 'post', func: this.login },
-		]);
-	}
+  constructor(
+    @inject(TYPES.ILogger) private loggerService: ILogger,
+    @inject(TYPES.UserService) private userService: UserService,
+  ) {
+    super(loggerService);
+    this.bindRoutes([
+      {
+        path: '/register',
+        method: 'post',
+        func: this.register,
+        middlewares: [new ValidateMiddleware(UserRegisterDto)],
+      },
+      { path: '/login', method: 'post', func: this.login },
+    ]);
+  }
 
-	login(req: Request<{}, {}, UserLoginDto>, res: Response, next: NextFunction): void {
-		console.log(req.body);
-		next(new HTTPError(401, 'authorization error', 'login'));
-	}
+  login(req: Request<{}, {}, UserLoginDto>, res: Response, next: NextFunction): void {
+    console.log(req.body);
+    next(new HTTPError(401, 'authorization error', 'login'));
+  }
 
-	async register(
-		{ body }: Request<{}, {}, UserRegisterDto>,
-		res: Response,
-		next: NextFunction,
-	): Promise<void> {
-		const result = await this.userService.createUser(body);
-		if (!result) {
-			return next(new HTTPError(422, 'User already exists'));
-		}
-		this.ok(res, { email: result.email });
-	}
+  async register(
+    { body }: Request<{}, {}, UserRegisterDto>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    const result = await this.userService.createUser(body);
+    if (!result) {
+      return next(new HTTPError(422, 'User already exists'));
+    }
+    this.ok(res, { email: result.email, id: result });
+  }
 }
