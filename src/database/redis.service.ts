@@ -15,6 +15,7 @@ export class RedisService {
     try {
       await this.client.connect();
       this.logger.log('[RedisService] Successfully connect to db');
+      console.log(await this.client.GET('message')); // <= FIXME:
     } catch (e) {
       if (e instanceof Error) {
         this.logger.error('[RedisService] Connection Error: ' + e.message);
