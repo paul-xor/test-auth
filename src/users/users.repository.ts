@@ -4,7 +4,7 @@ import { TYPES } from '../types';
 import { User } from './user.entity';
 import { IUsersRepository } from './users.repository.interface';
 import { genId } from '../utils/gen-id';
-import { usersKey, userNameUniqueKey } from '../utils/keys';
+import { usersKey, userNameUniqueKey, userNamesKey } from '../utils/keys';
 
 interface IUserDeserialize {
   id: string;
@@ -25,6 +25,10 @@ export class UsersRepository implements IUsersRepository {
       name,
     });
     await this.redisService.client.sAdd(userNameUniqueKey(), name);
+    await this.redisService.client.zAdd(userNamesKey(), {
+      value: name,
+      score: parseInt(id, 16),
+    });
     return id;
   }
 
@@ -33,6 +37,16 @@ export class UsersRepository implements IUsersRepository {
   }
 
   async find(id: string): Promise<any | null> {
+    const user = await this.redisService.client.hGetAll(usersKey(id));
+    return this.deserialize(id, user);
+  }
+
+  async findByName(username: string): Promise<any> {
+    const decimalId = await this.redisService.client.zScore(userNamesKey(), username);
+    if (!decimalId) {
+      throw new Error('User does not exist');
+    }
+    const id = decimalId.toString(16);
     const user = await this.redisService.client.hGetAll(usersKey(id));
     return this.deserialize(id, user);
   }
