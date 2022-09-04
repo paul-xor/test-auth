@@ -49,7 +49,6 @@ export class UserController extends BaseController implements IUserController {
     res: Response,
     next: NextFunction,
   ): Promise<void> {
-    console.log(req.body);
     const result = await this.userService.validateUser(req.body);
     if (!result) {
       return next(new HTTPError(401, 'authorization error', 'login'));

@@ -37,7 +37,6 @@ export class UsersRepository implements IUsersRepository {
   }
 
   async find(username: string): Promise<any | null> {
-    console.log('## username: ', username);
     const decimalId = await this.redisService.client.zScore(userNamesKey(), username);
     if (!decimalId) {
       throw new Error('User does not exist');
